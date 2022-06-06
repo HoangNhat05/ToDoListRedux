@@ -1,0 +1,6 @@
+module Pods_toDoAppRedux {
+  umbrella header "Pods-toDoAppRedux-umbrella.h"
+
+  export *
+  module * { export * }
+}
