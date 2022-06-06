@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   Animated,
-  StatusBar,
+  Alert
 } from "react-native";
 import store from "./store";
 import reducer from "./reducer";
@@ -17,17 +17,55 @@ import { useSelector } from "react-redux";
 
 const ListItems = () => {
   const value = useSelector((state) => state) || [];
+  React.useEffect(() => {
+   
+   
+  },[value]);
+  const [list, setUpdateList] = React.useState(value);
+  
 
+  const processDelete = () => {
+    
+      setUpdateList(list.filter(item => item.text !== text));
+      store.dispatch(addTodoAction(list.filter(item => item.text !== text)))
+      console.log("OK Pressed")
+  
+  }
   console.log(value);
+  const deleteItem = () => {
+    Alert.alert(
+      "Thông báo",
+     "Bạn có chắc chắn xoá nội dung này không ?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => {
+          console.log("OK Pressed")
+          setUpdateList(list.filter(item => item.text !== text));
+          store.dispatch(addTodoAction(list))
+      
+        }}
+      ]
+    );
+    // alert("Bạn có chắc chắn xoá nội dung này không ?");
+
+
+  }
+  const updateItem =() =>{
+
+  }
   const renderItem = ({ item }) => (
     <View style={styles.viewItem}>
       <Text style={styles.item}>{item.text}</Text>
 
-      <TouchableOpacity style={styles.update}>
+      <TouchableOpacity style={styles.update} onPress={updateItem}>
         <Text style={styles.textStyle}>Sửa</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.delete}>
+      <TouchableOpacity style={styles.delete} onPress={deleteItem}>
         <Text style={styles.textStyle}>Xoá</Text>
       </TouchableOpacity>
     </View>
@@ -36,7 +74,7 @@ const ListItems = () => {
   return (
     <View style={{ marginTop: 100 }}>
       <Text
-        style={{ fontSize: 20, justifyContent: "center", alignSelf: "center" }}
+        style={{ fontSize: 20, justifyContent: "center", alignSelf: "center", marginBottom:30 }}
       >
         {"Danh sách việc cần làm"}
       </Text>
