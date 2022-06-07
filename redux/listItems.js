@@ -9,37 +9,26 @@ import {
   TouchableOpacity,
   FlatList,
   Animated,
-  Alert
+  Alert,
+  Modal
 } from "react-native";
 import store from "./store";
 import reducer from "./reducer";
 import { useSelector } from "react-redux";
-import addTodoAction from './actions';
+import {addTodoAction, deleteAction,updateAction} from './actions';
 
 const ListItems = () => {
   const value = useSelector((state) => state) || [];
 
   const [list, setUpdateList] = React.useState(value);
+  const [text, setText] = React.useState("");
+  const [idItem, setIdItem] = React.useState(0);
+  const [modalVisible, setModalVisible] = React.useState(false);
 
-  // React.useEffect(() => {
-   
-   
-  // },[value]);
-  
-  
-
-  // const processDelete = () => {
-    
-  //     setUpdateList(list.filter(item => item.text !== text));
-  //     store.dispatch(addTodoAction(list.filter(item => item.text !== text)))
-  //     console.log("OK Pressed")
-  
-  // }
   console.log(value);
   const deleteItem = (item) => {
     
      const keyTemp = item.key
-     console.log("Item Key ",keyTemp)
     Alert.alert(
       "Thông báo",
      "Bạn có chắc chắn xoá nội dung này không ?",
@@ -51,17 +40,31 @@ const ListItems = () => {
         },
         { text: "OK", onPress: () => {
           console.log("OK Pressed")
-        //  setUpdateList(list.filter(item => item.text != text));
           const listTemp = value.filter(item => item.key !== keyTemp)
           console.log("list temp",listTemp)
-          store.dispatch(addTodoAction(listTemp))
+          store.dispatch(deleteAction(listTemp))
       
         }}
       ]
     );
   }
-  const updateItem =() =>{
+  const updateItem =(item) => {
+    const keyTemp = item.key
+    const itemTemp = value.filter(item => item.key == keyTemp)
+    for(let i=0 ; i < value.length; i++){
+     if( value[i].key == keyTemp) { 
+      setIdItem(i)
+     }
+    }
+    setText(itemTemp[0].text)
+    setModalVisible(true)
+  }
 
+  const dispathUpdate= () =>{
+    let listTemp = [...value]
+    listTemp[idItem].text = text
+    store.dispatch(updateAction(listTemp))
+    setModalVisible(false)
   }
   const renderItem = ({ item }) => (
     <View style={styles.viewItem}>
@@ -89,16 +92,35 @@ const ListItems = () => {
         renderItem={renderItem}
         keyExtractor={(item) => item.key}
       />
-
-      {/* {value.map(element => <Text style={styles.item}>{element}</Text>)} */}
-      {/* <Text style={styles.item}>{value}</Text>         */}
+       <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+         <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TextInput
+                placeholder='Sửa việc cần làm'
+                style={styles.input}
+                onChangeText={setText}
+                value={text}/>
+              <TouchableOpacity style = {styles.button_add} onPress ={()=>dispathUpdate()}>
+              <Text>{'Cập nhật'}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 const styles = StyleSheet.create({
   input: {
     height: 40,
-    width: "60%",
+    width: "90%",
     margin: 12,
     padding: 10,
     borderBottomWidth: 1,
@@ -149,5 +171,41 @@ const styles = StyleSheet.create({
   textStyle: {
     color: "white",
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    width:"70%",
+    margin: 10,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalText: {
+    //marginBottom: 15,
+    textAlign: "center"
+  },
+  button_add:{
+    height: 30,
+    width:70,
+    marginTop:15,
+    borderColor:'red',
+    borderWidth:2,
+    borderRadius:10,
+    justifyContent:'center',
+    alignItems:'center' 
+  }
 });
 export default ListItems;

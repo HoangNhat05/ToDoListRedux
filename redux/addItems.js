@@ -1,19 +1,20 @@
 import React from 'react';
 import { StyleSheet, Text, SafeAreaView ,TextInput,View,Button, TouchableOpacity} from 'react-native';
 import store from './store'
-import addTodoAction from './actions';
+import {addTodoAction} from './actions';
+import { useSelector } from "react-redux";
+
 const AddItems = () => {
     const [text, setText] = React.useState("");
-    const [todoList, setTodoList] = React.useState([]);
+    const value = useSelector((state) => state) || [];
+
     const addTodo =() => {
       if(text!=""){
-        setTodoList([...todoList,{ text: text, key: Date.now()}])
-        store.dispatch(addTodoAction([...todoList,{text: text, key: Date.now()}]))
+        store.dispatch(addTodoAction([...value,{text: text, key: Date.now()}]))
         setText('')
       }
-     
-
     }
+  
     return(
       <View style={{flexDirection:'column',flex:1}}>
         <View style={styles.view_add}>

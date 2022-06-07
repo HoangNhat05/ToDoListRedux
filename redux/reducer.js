@@ -1,10 +1,11 @@
 
 
 const todoReducer = (state = '', action) => {
- // let todoList = [action.payload];
-     //console.log(action);
+ 
     switch(action.type) {
       case 'ADD_TODO': return action.payload;
+      case 'DELETE_ITEM': return action.payload;
+      case 'UPDATE_ITEM': return action.payload;
       default: return state;
     }
 }
