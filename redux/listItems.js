@@ -14,25 +14,32 @@ import {
 import store from "./store";
 import reducer from "./reducer";
 import { useSelector } from "react-redux";
+import addTodoAction from './actions';
 
 const ListItems = () => {
   const value = useSelector((state) => state) || [];
-  React.useEffect(() => {
-   
-   
-  },[value]);
+
   const [list, setUpdateList] = React.useState(value);
+
+  // React.useEffect(() => {
+   
+   
+  // },[value]);
+  
   
 
-  const processDelete = () => {
+  // const processDelete = () => {
     
-      setUpdateList(list.filter(item => item.text !== text));
-      store.dispatch(addTodoAction(list.filter(item => item.text !== text)))
-      console.log("OK Pressed")
+  //     setUpdateList(list.filter(item => item.text !== text));
+  //     store.dispatch(addTodoAction(list.filter(item => item.text !== text)))
+  //     console.log("OK Pressed")
   
-  }
+  // }
   console.log(value);
-  const deleteItem = () => {
+  const deleteItem = (item) => {
+    
+     const keyTemp = item.key
+     console.log("Item Key ",keyTemp)
     Alert.alert(
       "Thông báo",
      "Bạn có chắc chắn xoá nội dung này không ?",
@@ -44,15 +51,14 @@ const ListItems = () => {
         },
         { text: "OK", onPress: () => {
           console.log("OK Pressed")
-          setUpdateList(list.filter(item => item.text !== text));
-          store.dispatch(addTodoAction(list))
+        //  setUpdateList(list.filter(item => item.text != text));
+          const listTemp = value.filter(item => item.key !== keyTemp)
+          console.log("list temp",listTemp)
+          store.dispatch(addTodoAction(listTemp))
       
         }}
       ]
     );
-    // alert("Bạn có chắc chắn xoá nội dung này không ?");
-
-
   }
   const updateItem =() =>{
 
@@ -61,11 +67,11 @@ const ListItems = () => {
     <View style={styles.viewItem}>
       <Text style={styles.item}>{item.text}</Text>
 
-      <TouchableOpacity style={styles.update} onPress={updateItem}>
+      <TouchableOpacity style={styles.update} onPress={()=>updateItem(item)}>
         <Text style={styles.textStyle}>Sửa</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.delete} onPress={deleteItem}>
+      <TouchableOpacity style={styles.delete} onPress={()=>deleteItem(item)}>
         <Text style={styles.textStyle}>Xoá</Text>
       </TouchableOpacity>
     </View>
